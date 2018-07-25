@@ -84,6 +84,7 @@ spec:
     image: "{{ .Values.envImage }}:{{.Values.tag}}"
     container:
       command: ["/fission-workflows-bundle"]
+      {{- if .Values.debug }}
       args: [
       # Override workflow env CMD to optionally enable --debug
         "--nats",
@@ -95,10 +96,9 @@ spec:
         "--api-workflow",
         "--api-admin",
         "--metrics",
-        {{- if .Values.debug }}
         "--debug",
-        {{- end }}
       ]
+      {{- end }}
       env:
       - name: ES_NATS_URL
         value: "nats://{{ .Values.nats.authToken }}@{{ .Values.nats.location }}.{{ .Values.fnenv.fission.ns }}:{{ .Values.nats.port }}"
