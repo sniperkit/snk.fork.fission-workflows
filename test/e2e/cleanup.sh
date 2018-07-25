@@ -28,9 +28,9 @@ cleanup_fission() {
 
     emph "Removing custom resources..."
     clean_tpr_crd_resources || true
-    kubectl delete all --all -n ${NS}
-    kubectl delete all --all -n ${NS_FUNCTION}
-    kubectl delete all --all -n ${NS_BUILDER}
+    kubectl delete all --all -n ${NS} --now
+    kubectl delete all --all -n ${NS_FUNCTION} --now
+    kubectl delete all --all -n ${NS_BUILDER} --now
 
 
     # Trigger deletion of all namespaces before waiting - for concurrency of deletion
