@@ -24,6 +24,7 @@ env:
     - FISSION_VERSION=0.9.1
     - HELM_VERSION=2.8.2
     - KUBECTL_VERSION=1.9.6
+    - E2E_ENABLED=$(if [ ${TRAVIS_PULL_REQUEST_SLUG} == "fission/fission-workflows" ]; then echo "y"; else echo "n"; fi)
 
 services:
   - docker
@@ -48,19 +49,19 @@ before_script:
 # Build
 - glide install -v
 - build/build-linux.sh
-- test/e2e/travis-setup.sh
+- if [ ${E2E_ENABLED} == "y" ]; then test/e2e/travis-setup.sh; fi
 # Checks using the built artifacts
 
 script:
 # Unit and Integration tests
 - test/runtests.sh
 # End-to-end tests
-- NOBUILD=y test/e2e/buildtest.sh
+- if [ ${E2E_ENABLED} == "y" ]; then NOBUILD=y test/e2e/buildtest.sh; fi
 # Use newest wfcli to verify workflows in example dir
 - hack/verify-workflows.sh
 
 after_script:
-- test/e2e/cleanup.sh
+- if [ ${E2E_ENABLED} == "y" ]; then test/e2e/cleanup.sh; else echo "!! External PR; e2e tests did not run !!"; fi
 
 notifications:
   slack:
